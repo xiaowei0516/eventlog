@@ -76,11 +76,7 @@ int MainLoop()
 	FILE *fp = NULL;
 
     
-    XPathList * XPathQueries = (XPathList*)calloc(1, sizeof(*XPathQueries));
-
-   
-
-
+ 
     /* Gather eventlog names */
     if (RegistryGather())
 		return 1;
@@ -97,13 +93,7 @@ int MainLoop()
 		"32"
 #endif
 	);
-	Log(LOG_INFO, "evtsys Flags: LogLevel=%u, IncludeOnly=%s, EnableTcp=%s, IncludeTag=%s, StatusInterval=%u",
-		SyslogLogLevel,
-        SyslogIncludeOnly ? "True" : "False",
-        SyslogEnableTcp ? "True" : "False",
-        SyslogIncludeTag ? "True" : "False",
-		SyslogStatusInterval
-	);
+	
 
   
 
@@ -114,7 +104,7 @@ int MainLoop()
 		
 			for (log = 0; log < EventlogCount; log++) {
 				/* Loop for all messages */
-                while ((output = EventlogNext(IgnoredEvents, log, &level))) {
+                while ((output = EventlogNext( log, &level))) {
                     if (output != NULL) {
 						if (SyslogSend(output, level)) {
 							ServiceIsRunning = FALSE;

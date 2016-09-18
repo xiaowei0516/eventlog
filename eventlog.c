@@ -140,7 +140,7 @@ int EventlogsOpen()
 }
 
 /* Get the next eventlog message */
-char * EventlogNext(EventList ignore_list[MAX_IGNORED_EVENTS], int log, int * level)
+char * EventlogNext(int log, int * level)
 {
 	BOOL reopen = FALSE;
 	DWORD errnum;
@@ -246,13 +246,7 @@ char * EventlogNext(EventList ignore_list[MAX_IGNORED_EVENTS], int log, int * le
 	/* Get source and event id */
 	source = current + sizeof(*event);
 	event_id = (int) HRESULT_CODE(event->EventID);
-	
-	/* Check Event Info Against Ignore List */
-	if (IgnoreSyslogEvent(ignore_list, source, event_id)) {
-		if (LogInteractive)
-			printf("IGNORING_EVENT: SOURCE=%s & ID=%i\n", source, event_id);
-		return NULL;
-	}
+
 	
 	/* Check number of strings */
 	if (event->NumStrings > COUNT_OF(string_array)) {

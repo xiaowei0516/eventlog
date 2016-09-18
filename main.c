@@ -86,8 +86,7 @@ BOOL ProgramUseIPAddress = FALSE;
 char ProgramHostName[256];
 char ProgramExePath[MAX_PATH];
 
-EventList IgnoredEvents[MAX_IGNORED_EVENTS];
-XPathList * XPathQueries;
+
 
 // Main program //
 int main(int argc, char ** argv)

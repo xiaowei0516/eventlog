@@ -88,8 +88,7 @@ typedef struct EVENT_LIST EventList;
 typedef struct XPATH_LIST XPathList;
 
 extern int  IGNORED_LINES;
-extern EventList IgnoredEvents[MAX_IGNORED_EVENTS] ;
-extern XPathList * XPathQueries;
+
 extern BOOL ProgramUseIPAddress;
 extern char ProgramHostName[256];
 extern char ProgramExePath[MAX_PATH];
@@ -113,7 +112,7 @@ int     ConvertLogHostToIp(char * loghost, char ** ipstr);
 DWORD   CreateConfigFile(char * filename);
 boolean    CreateQueryString(WCHAR * pQuery, XPathList * xpathQueries);
 int     EventlogCreate(char * name);
-char*   EventlogNext(EventList ignore_list[MAX_IGNORED_EVENTS], int log, int * level);
+char*   EventlogNext( int log, int * level);
 void    EventlogsClose(void);
 int     EventlogsOpen(void);
 char*   FormatLibraryMessage(char * message_file, DWORD event_id, char ** string_array);
