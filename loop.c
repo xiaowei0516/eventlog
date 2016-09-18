@@ -73,35 +73,21 @@ int MainLoop()
 	int level;
 	int log;
 	int stat_counter = 0;
-    BOOL winEvents;
 	FILE *fp = NULL;
 
-    //EventList IgnoredEvents[MAX_IGNORED_EVENTS];
+    
     XPathList * XPathQueries = (XPathList*)calloc(1, sizeof(*XPathQueries));
 
-    /* Check for new Crimson Log Service */
-	winEvents = CheckForWindowsEvents();
+   
 
 
-	/* Grab Ignore List From File   捕捉忽略的文件列表*/
-	/*                                                                               evtsys.cfg whole path*/
-    if (CheckSyslogIgnoreFile(IgnoredEvents, &XPathQueries, getConfigPath()) < 0)
+    /* Gather eventlog names */
+    if (RegistryGather())
 		return 1;
-
-    /* Determine whether Tag is set */
-    if (strlen(SyslogTag) > 0)
-        SyslogIncludeTag = TRUE;
-
-	if (winEvents == FALSE)
-    {
-        /* Gather eventlog names */
-        if (RegistryGather())
-		    return 1;
-
-	    /* Open all eventlogs */
-	    if (EventlogsOpen())
-		    return 1;
-    }
+     /* Open all eventlogs */
+    if (EventlogsOpen())
+		return 1;
+    
 
 	/* Service is now running */
 	Log(LOG_INFO, "evtsys Eventlog to Syslog Service Started: Version %s (%s-bit)", VERSION,
@@ -119,18 +105,13 @@ int MainLoop()
 		SyslogStatusInterval
 	);
 
-    if (winEvents) {
-        if(WinEventSubscribe(XPathQueries, XPATH_COUNT) != ERROR_SUCCESS)
-        {
-            ServiceIsRunning = FALSE;
-        }
-    }
+  
 
 	/* Loop while service is running */
 	while (ServiceIsRunning)
     {
 		/* Process records */
-		if (winEvents == FALSE) {
+		
 			for (log = 0; log < EventlogCount; log++) {
 				/* Loop for all messages */
                 while ((output = EventlogNext(IgnoredEvents, log, &level))) {
@@ -142,7 +123,7 @@ int MainLoop()
                     }
                 }
 			}
-		}
+		
 		
 		/* Send status message to inform server that client is active */
 		if (SyslogStatusInterval != 0) {
@@ -159,9 +140,7 @@ int MainLoop()
 	/* Service is stopped */
 	Log(LOG_INFO, "Eventlog to Syslog Service Stopped");
 
-	/* Close eventlogs */
-    if (winEvents)
-        WinEventCancelSubscribes();
+	
 
 	EventlogsClose();
     SyslogClose();
