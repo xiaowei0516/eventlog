@@ -134,41 +134,6 @@ int CheckSyslogFacility(char * facility)
 	return 0;
 }
 
-// Check port number //
-int CheckSyslogPort(char * port)
-{
-	DWORD value;
-	char * eos;
-	struct servent * service;
-
-	// Try converting to integer //
-	value = strtoul(port, &eos, 10);
-	if (eos == port || *eos != '\0') {
-
-		// Try looking up name //
-		service = getservbyname(port, "udp");
-		if (service == NULL) {
-			Log(LOG_ERROR, "Invalid service name: \"%s\"", port);
-			return 1;
-		}
-
-		// Convert back to host order //
-		value = ntohs(service->s_port);
-	} else {
-
-		// Check for valid number //
-		if (value <= 0 || value > 0xffff) {
-			Log(LOG_ERROR, "Invalid service number: %u", value);
-			return 1;
-		}
-	}
-
-	// Store new value //
-	SyslogPort = value;
-
-	// Success //
-	return 0;
-}
 
 // Check log host //
 int CheckSyslogLogHost(char * loghostarg)

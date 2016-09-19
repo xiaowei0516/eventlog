@@ -105,7 +105,9 @@ int MainLoop()
                           }			
                     }
 		 }
-		
+
+
+		/*打开文件*/
 		/* Sleep five seconds */
 		Sleep(5000);
 	}
