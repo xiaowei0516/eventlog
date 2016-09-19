@@ -58,7 +58,6 @@
 #include "main.h"
 #include "syslog.h"
 #include "wsock.h"
-#include "dhcp.h"
 
 // syslog //
 

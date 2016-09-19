@@ -58,7 +58,6 @@
 #include "main.h"
 #include "log.h"
 #include "syslog.h"
-#include "dhcp.h"
 #include "wsock.h"
 
 /* WinSock */
