@@ -85,28 +85,15 @@ int MainLoop()
 		return 1;
     
 
-	/* Service is now running */
-	Log(LOG_INFO, "evtsys Eventlog to Syslog Service Started: Version %s (%s-bit)", VERSION,
-#ifdef _WIN64
-		"64"
-#else
-		"32"
-#endif
-	);
-	
-
-  
-
 	/* Loop while service is running */
 	while (ServiceIsRunning)
     {
 		/* Process records */
-		
-			for (log = 0; log < EventlogCount; log++) {
+		for (log = 0; log < EventlogCount; log++) {
 				/* Loop for all messages */
-                while ((output = EventlogNext( log, &level))) {
-                    if (output != NULL) {
-						if (SyslogSend(output, level)) {
+                    while ((output = EventlogNext( log, &level))) {
+                        if (output != NULL) {
+					if (ascii2utf8(output, level)) {
 							ServiceIsRunning = FALSE;
 							break;
 						}
@@ -115,13 +102,7 @@ int MainLoop()
 			}
 		
 		
-		/* Send status message to inform server that client is active */
-		if (SyslogStatusInterval != 0) {
-			if (++stat_counter == SyslogStatusInterval*12) { // Because the service loops ~12 times/min
-				stat_counter = 0; /* Reset Counter */
-				Log(LOG_INFO, "Eventlog to Syslog Service Running");
-			}
-        }
+		
 
 		/* Sleep five seconds */
 		Sleep(5000);
@@ -138,3 +119,27 @@ int MainLoop()
 	/* Success */
 	return 0;
 }
+
+
+// Send a message to the syslog server //
+int ascii2utf8(char * message, int level)
+{
+	char error_message[SYSLOG_DEF_SZ];   /*1024*/
+	WCHAR utf16_message[SYSLOG_DEF_SZ];  /*1024*/
+	char utf8_message[SYSLOG_DEF_SZ];        /*1024*/
+
+	// Write priority level //
+	_snprintf_s(error_message, sizeof(error_message), _TRUNCATE,
+		"<%d>%s",
+		level,
+		message
+	);
+
+	// convert from ansi/cp850 codepage (local system codepage) to utf8, widely used codepage on unix systems //
+	MultiByteToWideChar(CP_ACP, 0, error_message, -1, utf16_message, SYSLOG_DEF_SZ);
+	WideCharToMultiByte(CP_UTF8, 0, utf16_message, -1, utf8_message, SYSLOG_DEF_SZ, NULL, NULL);
+
+	// Send result to syslog server //
+	return WSockSend(utf8_message);
+}
+
