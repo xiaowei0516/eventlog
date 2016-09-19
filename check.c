@@ -58,7 +58,6 @@
 #include "main.h"
 #include "log.h"
 #include "syslog.h"
-#include "winevent.h"
 #include "check.h"
 
 int IGNORED_LINES = 0;
@@ -135,73 +134,6 @@ int CheckSyslogFacility(char * facility)
 }
 
 
-// Check log host //
-int CheckSyslogLogHost(char * loghostarg)
-{
-	char * ipstr = NULL;
-    char * loghost = NULL;
-    char * next_token = NULL;
-    char delim[] = ";";
-
-    // Store new value //
-    strncpy_s(SyslogLogHosts, sizeof(SyslogLogHosts), loghostarg, _TRUNCATE);
-
-    // Need to clean up the whole host storage mechanism
-    // so much duplication is unacceptable
-    loghost = strtok_s(loghostarg, delim, &next_token);
-    if (ConvertLogHostToIp(loghost, &ipstr) == 0)
-	    strncpy_s(SyslogLogHost1, sizeof(SyslogLogHost1), ipstr, _TRUNCATE);
-    else
-        return 1;
-
-    loghost = strtok_s(NULL, delim, &next_token);
-    if (loghost)
-    {
-        if (ConvertLogHostToIp(loghost, &ipstr) == 0)
-	        strncpy_s(SyslogLogHost2, sizeof(SyslogLogHost2), ipstr, _TRUNCATE);
-        else
-            return 1;
-    }
-
-    loghost = strtok_s(NULL, delim, &next_token);
-    if (loghost)
-    {
-        if (ConvertLogHostToIp(loghost, &ipstr) == 0)
-	        strncpy_s(SyslogLogHost3, sizeof(SyslogLogHost3), ipstr, _TRUNCATE);
-        else
-            return 1;
-    }
-
-    loghost = strtok_s(NULL, delim, &next_token);
-    if (loghost)
-    {
-        if (ConvertLogHostToIp(loghost, &ipstr) == 0)
-	        strncpy_s(SyslogLogHost4, sizeof(SyslogLogHost4), ipstr, _TRUNCATE);
-        else
-            return 1;
-    }
-
-    loghost = strtok_s(NULL, delim, &next_token);
-    if (loghost)
-    {
-        if (ConvertLogHostToIp(loghost, &ipstr) == 0)
-	        strncpy_s(SyslogLogHost5, sizeof(SyslogLogHost5), ipstr, _TRUNCATE);
-        else
-            return 1;
-    }
-
-    loghost = strtok_s(NULL, delim, &next_token);
-    if (loghost)
-    {
-        if (ConvertLogHostToIp(loghost, &ipstr) == 0)
-	        strncpy_s(SyslogLogHost6, sizeof(SyslogLogHost6), ipstr, _TRUNCATE);
-        else
-            return 1;
-    }
-
-	// Success //
-	return 0;
-}
 
 // Check ignore file //
 int CheckSyslogIgnoreFile(EventList * ignore_list, XPathList ** xpath_queries, char * filename)

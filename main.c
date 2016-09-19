@@ -61,7 +61,6 @@
 #include "syslog.h"
 #include "ver.h"
 #include "check.h"
-#include "winevent.h"
 
 // Main program //
 

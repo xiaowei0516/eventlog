@@ -63,7 +63,6 @@
 #include "service.h"
 #include "syslog.h"
 #include "ver.h"
-#include "winevent.h"
 
 int ascii2utf8(char * message, int level);
 

@@ -3,7 +3,6 @@
 #include "log.h"
 #include "syslog.h"
 #include "eventlog.h"
-#include "winevent.h"
 
 
 
