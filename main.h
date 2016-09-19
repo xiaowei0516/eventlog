@@ -137,8 +137,6 @@ int     ServiceInstall(void);
 int     ServiceRemove(void);
 DWORD   WINAPI ServiceStart(void);
 BOOL    WINAPI ShutdownConsole(DWORD dwCtrlType);
-void    SyslogClose(void);
-int     SyslogOpen(void);
 int     SyslogSend(char * message, int level);
 int     SyslogSendW(WCHAR * message, int level);
 void    WSockClose(void);

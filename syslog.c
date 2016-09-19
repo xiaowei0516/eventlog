@@ -83,47 +83,6 @@ DWORD SyslogIncludeOnly = FALSE;
 DWORD SyslogMessageSize = SYSLOG_DEF_SZ;
 DWORD SyslogEnableTcp = FALSE;
 
-// Open syslog connection //
-int SyslogOpen()
-{
-	// Query the dhcp if enabled //
-	if(SyslogQueryDhcp && !DHCPQuery())
-		WSockOpen(SyslogLogHostDhcp, (unsigned short)SyslogPort, LOG_HOST_DHCP);
-
-	// Start network connections //
-	if (SyslogLogHost1[0] != '\0')
-		if (WSockOpen(SyslogLogHost1, (unsigned short)SyslogPort, LOG_HOST1))
-			return 1;
-
-	if (SyslogLogHost2[0] != '\0')
-		if (WSockOpen(SyslogLogHost2, (unsigned short)SyslogPort, LOG_HOST2))
-			return 1;
-
-	if (SyslogLogHost3[0] != '\0')
-		if (WSockOpen(SyslogLogHost3, (unsigned short)SyslogPort, LOG_HOST3))
-			return 1;
-
-	if (SyslogLogHost4[0] != '\0')
-		if (WSockOpen(SyslogLogHost4, (unsigned short)SyslogPort, LOG_HOST4))
-			return 1;
-    
-    if (SyslogLogHost5[0] != '\0')
-		if (WSockOpen(SyslogLogHost5, (unsigned short)SyslogPort, LOG_HOST5))
-			return 1;
-
-    if (SyslogLogHost6[0] != '\0')
-		if (WSockOpen(SyslogLogHost6, (unsigned short)SyslogPort, LOG_HOST6))
-			return 1;
-
-    // Success //
-	return 0;
-}
-
-// Close syslog connection //
-void SyslogClose()
-{
-	WSockClose();
-}
 
 // Send a message to the syslog server //
 int SyslogSend(char * message, int level)

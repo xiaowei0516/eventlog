@@ -238,18 +238,19 @@ char * EventlogNext(int log, int * level)
 	current = EventlogList[log].buffer + EventlogList[log].pos;
 
 	/* Get pointer to current event record */
-	event = (EVENTLOGRECORD *) current;
+	event = (EVENTLOGRECORD *) current;             /*格式化数据*/
 
 	/* Advance position */
-	EventlogList[log].pos += event->Length;
+	EventlogList[log].pos += event->Length;         /*下一次读取日志的位置*/
 
 	/* Get source and event id */
-	source = current + sizeof(*event);
-	event_id = (int) HRESULT_CODE(event->EventID);
+	source = current + sizeof(*event);                /*跳过头部*/
+	event_id = (int) HRESULT_CODE(event->EventID);    /*EventID 日志记录标识*/
 
 	
 	/* Check number of strings */
-	if (event->NumStrings > COUNT_OF(string_array)) {
+	if (event->NumStrings > COUNT_OF(string_array)) {  /*StringOffset  描述字符串的偏移量
+													     NumStrings    log中string的数量，如果合并就是整个log string*/
 
 		/* Too many strings */
 		Log(LOG_WARNING, "Eventlog message has too many strings to print message: \"%s\": %u strings", EventlogList[log].name, event->NumStrings);
@@ -257,7 +258,7 @@ char * EventlogNext(int log, int * level)
 	} else {
 
 		/* Convert strings to arrays */
-		cp = current + event->StringOffset;
+		cp = current + event->StringOffset;    /*存储每个string*/
 		for (i = 0; i < event->NumStrings; i++) {
 			string_array[i] = cp;
 			while (*cp++ != '\0');
@@ -294,20 +295,9 @@ char * EventlogNext(int log, int * level)
 	}
 
 	/* Format source and event ID number */
-	if(SyslogIncludeTag) {
-		_snprintf_s(message, sizeof(message), _TRUNCATE,
-			"%s: %s: %u: ",
-			SyslogTag,
-			source,
-			HRESULT_CODE(event->EventID)
-		);
-	} else {
-		_snprintf_s(message, sizeof(message), _TRUNCATE,
-			"%s: %u: ",
-			source,
-			HRESULT_CODE(event->EventID)
-		);
-	}
+	
+	_snprintf_s(message, sizeof(message), _TRUNCATE,  "%s: %u: ",   source,  HRESULT_CODE(event->EventID));
+	
 
 	/* Convert user */
 	if (event->UserSidLength > 0) {
