@@ -62,7 +62,6 @@
 #include "ver.h"
 #include "check.h"
 #include "winevent.h"
-#include "wsock.h"
 
 // Main program //
 

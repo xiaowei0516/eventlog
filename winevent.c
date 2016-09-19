@@ -508,7 +508,6 @@ DWORD ProcessEvent(EVT_HANDLE hEvent, PVOID context)
 	/* Making sure it is severe enough to be logged */
 
 	if (SyslogLogLevel == 0 || (SyslogLogLevel >= (DWORD)winlevel && winlevel > 0))
-		if (SyslogSendW(tstamped_message, level))
 			status = ERR_FAIL;
 
 	/* Cleanup memory and open handles */

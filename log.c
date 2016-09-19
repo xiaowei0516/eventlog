@@ -58,7 +58,6 @@
 #include "main.h"
 #include "log.h"
 #include "syslog.h"
-#include "wsock.h"
 #include <io.h>
 
 /* Indicate if interactive logging is available */
@@ -218,13 +217,10 @@ void Log(int level, char * message, ...)
 	    );
     }
 
-	/* Send to syslog if network running */
-	if (SyslogSend(tstamped_message, syslog_level))
-	{
-		/* Otherwise, send to eventlog */
-		LogSend(eventlog_priority, tstamped_message);
-	}
-
+	
+	/* Otherwise, send to eventlog */
+	LogSend(eventlog_priority, tstamped_message);
+	
 	/* Output to console */
 	if (LogInteractive) {
 		fputs(tstamped_message, stderr);

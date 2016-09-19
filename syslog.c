@@ -57,7 +57,6 @@
 // Include files //
 #include "main.h"
 #include "syslog.h"
-#include "wsock.h"
 
 // syslog //
 
@@ -83,45 +82,3 @@ DWORD SyslogMessageSize = SYSLOG_DEF_SZ;
 DWORD SyslogEnableTcp = FALSE;
 
 
-// Send a message to the syslog server //
-int SyslogSend(char * message, int level)
-{
-	char error_message[SYSLOG_DEF_SZ];   /*1024*/
-	WCHAR utf16_message[SYSLOG_DEF_SZ];  /*1024*/
-	char utf8_message[SYSLOG_DEF_SZ];        /*1024*/
-
-	// Write priority level //
-	_snprintf_s(error_message, sizeof(error_message), _TRUNCATE,
-		"<%d>%s",
-		level,
-		message
-	);
-
-	// convert from ansi/cp850 codepage (local system codepage) to utf8, widely used codepage on unix systems //
-	MultiByteToWideChar(CP_ACP, 0, error_message, -1, utf16_message, SYSLOG_DEF_SZ);
-	WideCharToMultiByte(CP_UTF8, 0, utf16_message, -1, utf8_message, SYSLOG_DEF_SZ, NULL, NULL);
-
-	// Send result to syslog server //
-	return WSockSend(utf8_message);
-}
-
-// Send a message to the syslog server //
-int SyslogSendW(WCHAR * message, int level)
-{
-	WCHAR utf16_message[SYSLOG_DEF_SZ];
-	char utf8_message[SYSLOG_DEF_SZ];
-
-
-	// Write priority level //
-	_snwprintf_s(utf16_message, COUNT_OF(utf16_message), _TRUNCATE,
-		L"<%d>%s",
-		level,
-		message
-	);
-
-	// convert to utf8, widely used codepage on unix systems //
-	WideCharToMultiByte(CP_UTF8, 0, utf16_message, -1, utf8_message, SYSLOG_DEF_SZ, NULL, NULL);
-
-	// Send result to syslog server //
-	return WSockSend(utf8_message);
-}
