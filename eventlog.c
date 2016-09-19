@@ -4,7 +4,6 @@
 #include "service.h"
 #include "syslog.h"
 #include "check.h"
-#include "dns.h"
 
 /* Number of eventlogs */
 #define EVENTLOG_SZ		32

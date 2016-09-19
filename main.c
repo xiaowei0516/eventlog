@@ -56,7 +56,6 @@
 
 // Include files //
 #include "main.h"
-#include "dns.h"
 #include "eventlog.h"
 #include "log.h"
 #include "syslog.h"
