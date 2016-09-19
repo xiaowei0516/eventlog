@@ -59,7 +59,6 @@
 #include "eventlog.h"
 #include "log.h"
 #include "syslog.h"
-#include "getopt.h"
 #include "ver.h"
 #include "check.h"
 #include "winevent.h"
