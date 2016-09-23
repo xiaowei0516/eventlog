@@ -85,9 +85,7 @@
 #define in_addr_t	unsigned long
 
 typedef struct EVENT_LIST EventList;
-typedef struct XPATH_LIST XPathList;
 
-extern int  IGNORED_LINES;
 
 extern BOOL ProgramUseIPAddress;
 extern char ProgramHostName[256];
@@ -95,11 +93,7 @@ extern char ProgramExePath[MAX_PATH];
 
 /* Prototypes */
 int     CheckForWindowsEvents();
-int     CheckSyslogIncludeOnly();
-int		CheckSyslogTag(char * arg);
 char*   CollapseExpandMessage(char * message);
-WCHAR*  CollapseExpandMessageW(WCHAR * message);
-boolean    CreateQueryString(WCHAR * pQuery, XPathList * xpathQueries);
 int     EventlogCreate(char * name);
 char*   EventlogNext( int log, int * level);
 void    EventlogsClose(void);
@@ -110,16 +104,12 @@ void    GetErrorW(DWORD err_num, WCHAR * message, int len);
 char*   GetTimeStamp(void);
 char*   GetUsername(SID * sid);
 char*   GetWinEvent(char * log, int recNum, int event_id);
-BOOL    IgnoreSyslogEvent(EventList * ignore_list, const char * E_SOURCE, int E_ID);
 int     LogStart(void);
 void    LogStop(void);
 void    Log(int level, char * message, ...);
 char*   LookupMessageFile(char * logtype, char * source, DWORD eventID);
 int     MainLoop(void);
 int     RegistryGather(void);
-int     ServiceInstall(void);
-int     ServiceRemove(void);
-DWORD   WINAPI ServiceStart(void);
 BOOL    WINAPI ShutdownConsole(DWORD dwCtrlType);
 int		EndsWith(const LPWSTR str, const LPWSTR suffix);
 int		StartsWith(const LPWSTR str, const LPWSTR suffix);

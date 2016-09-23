@@ -2,10 +2,6 @@
 // Microsoft Visual C++ generated include file.
 // Used by ver.rc
 //
-#define _USE_DECLSPECS_FOR_SAL          0
-#define _USE_ATTRIBUTES_FOR_SAL         0
-#define __drv_typeConst                 0
-#define __drv_typeCond                  1
 #define VS_VERSION_INFO                 1
 #define VFFF_ISSHAREDFILE               0x0001
 #define VFF_CURNEDEST                   0x0001

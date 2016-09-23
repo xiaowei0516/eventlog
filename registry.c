@@ -64,7 +64,7 @@ int RegistryGather()
 
 		// Check for error //
 		if (errnum) {
-			Log(LOG_ERROR|LOG_SYS, "Cannot enumerate registry key: \"%s\"", RegistryEventlogKeyPath);
+			printf("Cannot enumerate registry key: \"%s\"", RegistryEventlogKeyPath);
 			break;
 		}
 

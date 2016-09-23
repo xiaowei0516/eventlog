@@ -59,9 +59,8 @@
 #include "log.h"
 #include "syslog.h"
 #include "check.h"
+BOOL ServiceIsRunning = TRUE;
 
-int IGNORED_LINES = 0;
-int XPATH_COUNT = 0;
 
 // Facility conversion table //
 static struct {
@@ -96,75 +95,12 @@ static struct {
 
 
 
-XPathList* CreateXPath(char * plugin, char * source, char * query) {
-    XPathList* newXPath = (XPathList*)malloc(sizeof(XPathList));
-    if (newXPath != NULL){
-		newXPath->plugin = plugin;
-        newXPath->source = source;
-        newXPath->query = query;
-        newXPath->next = NULL;
-    }
-    
-    if (LogInteractive)
-        Log(LOG_INFO, "evtsys Creating XPATH:  %s | %s", source, query);
-
-    return newXPath;
-}
-
-XPathList* AddXPath(XPathList* xpathList, char * plugin, char * source, char * query) {
-    XPathList* newXPath = CreateXPath(plugin, source, query);
-    if (newXPath != NULL) {
-        newXPath->next = xpathList;
-    }
-
-    return newXPath;
-}
-
-void DeleteXPath(XPathList* oldXPath) {
-    if (oldXPath->next != NULL) {
-        DeleteXPath(oldXPath->next);
-    }
-
-    if (LogInteractive)
-        Log(LOG_INFO, "Deleting %s", oldXPath->source);
-    
-    if (oldXPath->source != NULL)
-        free(oldXPath->source);
-
-    if (oldXPath->query != NULL)
-		free(oldXPath->query);
-
-	if (oldXPath->plugin != NULL)
-		free(oldXPath->plugin);
-
-    free(oldXPath);
-}
 
 
 
 
-// Check for IncludeOnly flag //
-int CheckSyslogIncludeOnly()
-{
-	// Store new value //
-	SyslogIncludeOnly = TRUE;
 
-	// Success //
-	return 0;
-}
 
-int CheckSyslogTag(char * arg)
-{
-	if(strlen(arg) > sizeof(SyslogTag)-1) {
-		Log(LOG_ERROR, "Syslog tag too long: \"%s\"", arg);
-		return 1;
-	}
-	
-	SyslogIncludeTag = TRUE;
-	strncpy_s(SyslogTag, sizeof(SyslogTag), arg, _TRUNCATE);
-
-	return 0;
-}
 
 // Check for new Crimson Log Service //
 int CheckForWindowsEvents()
