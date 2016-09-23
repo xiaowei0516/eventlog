@@ -84,4 +84,3 @@ struct XPATH_LIST {
 XPathList* AddXPath(XPathList* xpathList, char * plugin, char * source, char * query);
 XPathList* CreateXPath(char * plugin, char * source, char * query);
 void       DeleteXPath(XPathList* oldXPath);
-char*	   getConfigPath();

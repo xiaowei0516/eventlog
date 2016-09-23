@@ -95,18 +95,10 @@ extern char ProgramExePath[MAX_PATH];
 
 /* Prototypes */
 int     CheckForWindowsEvents();
-int     CheckSyslogFacility(char * facility);
-int     CheckSyslogIgnoreFile(EventList * ignore_list, XPathList ** xpath_queries, char * filename);
-int	    CheckSyslogInterval(char * interval);
-int     CheckSyslogQueryDhcp(char * value);
-int     CheckSyslogLogLevel(char * level);
 int     CheckSyslogIncludeOnly();
 int		CheckSyslogTag(char * arg);
-XPathList* CheckXPath(XPathList * xpath_queries, char * line, char * delim);
 char*   CollapseExpandMessage(char * message);
 WCHAR*  CollapseExpandMessageW(WCHAR * message);
-int     ConvertLogHostToIp(char * loghost, char ** ipstr);
-DWORD   CreateConfigFile(char * filename);
 boolean    CreateQueryString(WCHAR * pQuery, XPathList * xpathQueries);
 int     EventlogCreate(char * name);
 char*   EventlogNext( int log, int * level);
