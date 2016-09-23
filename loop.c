@@ -2,7 +2,6 @@
 #include "main.h"
 #include "check.h"
 #include "eventlog.h"
-#include "log.h"
 #include "syslog.h"
 #include "ver.h"
 

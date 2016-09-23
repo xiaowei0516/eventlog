@@ -1,6 +1,5 @@
 #include <mbstring.h>
 #include "main.h"
-#include "log.h"
 #include "syslog.h"
 #include "eventlog.h"
 

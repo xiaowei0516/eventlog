@@ -1,6 +1,5 @@
 #include "main.h"
 #include "eventlog.h"
-#include "log.h"
 #include "syslog.h"
 #include "ver.h"
 #include "check.h"

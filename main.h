@@ -23,7 +23,6 @@
 /* Compatibility */
 #define in_addr_t	unsigned long
 
-typedef struct EVENT_LIST EventList;
 
 
 extern char ProgramExePath[MAX_PATH];
@@ -38,7 +37,6 @@ char*   FormatLibraryMessage(char * message_file, DWORD event_id, char ** string
 void    GetError(DWORD err_num, char * message, int len);
 char*   GetTimeStamp(void);
 char*   GetUsername(SID * sid);
-void    Log(int level, char * message, ...);
 char*   LookupMessageFile(char * logtype, char * source, DWORD eventID);
 int     MainLoop(void);
 int     RegistryGather(void);
