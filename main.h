@@ -23,9 +23,8 @@
 /* Compatibility */
 #define in_addr_t	unsigned long
 
+extern BOOL ServiceIsRunning;
 
-
-extern char ProgramExePath[MAX_PATH];
 
 /* Prototypes */
 char*   CollapseExpandMessage(char * message);

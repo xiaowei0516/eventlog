@@ -2,8 +2,8 @@
 #include "eventlog.h"
 #include "syslog.h"
 #include "ver.h"
-#include "check.h"
 
+BOOL ServiceIsRunning = TRUE;
 // Main program //
 int main(int argc, char ** argv)
 {

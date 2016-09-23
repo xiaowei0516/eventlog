@@ -56,7 +56,6 @@
 
 /* Include files */
 #include "main.h"
-#include "check.h"
 #include "syslog.h"
 #include <string.h>
 
