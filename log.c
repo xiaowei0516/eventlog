@@ -66,50 +66,6 @@ int LogInteractive = 0;
 /* Indicate if eventlog is initialized */
 static HANDLE LogSource = NULL;
 
-/* Start using eventlog */
-int LogStart()
-{
-	/* Indicate if interactive logging is available */
-	/*
-             _isatty: is or not character device
-	*/
-	LogInteractive = _isatty(_fileno(stdout));
-	printf("LogInteractive:%d\n",LogInteractive);
-
-	/* Open connection to event logger */
-	
-	/* 调用RegisterEventSource API来取得事件源句柄，原型为：
-
-        HANDLE RegisterEventSource ( LPCTSTR lpUNCServerName, LPCTSTR lpSourceName)
-
-       lpUNCServerName表示机器名，如果是在本机操作，添NULL就可以了
-       lpSourceName为事件源的名称，填写前面创建的键名就可以了
-       如果事件源的名称在注册表中找不到，那么系统会默认使用应用
-       类日志下的Application事件源。*/
-       
-	LogSource = RegisterEventSource(NULL, "EvtSys");
-	if (LogSource == NULL) {
-		Log(LOG_ERROR|LOG_SYS, "Cannot register source for event logging");
-		return 1;
-	}
-
-	/* Success */
-	return 0;
-}
-
-/* Stop using eventlog */
-void LogStop()
-{
-	/* Check indicator */
-	if (LogSource != NULL) {
-
-		/* Deregister source */
-		DeregisterEventSource(LogSource);
-
-		/* Reset indicators */
-		LogSource = NULL;
-	}
-}
 
 /* Send a message to the eventlog */
 static int LogSend(WORD level, char * message)
@@ -185,15 +141,12 @@ void Log(int level, char * message, ...)
 		break;
 	}
 
-	/* Add hostname for RFC compliance (RFC 3164) */
-	if (ProgramUseIPAddress == TRUE) {
-		strcpy_s(hostname, HOSTNAME_SZ, ProgramHostName);
-	} else {
-		if (ExpandEnvironmentStrings("%COMPUTERNAME%", hostname, COUNT_OF(hostname)) == 0) {
+
+	if (ExpandEnvironmentStrings("%COMPUTERNAME%", hostname, COUNT_OF(hostname)) == 0) {
 			strcpy_s(hostname, COUNT_OF(hostname), "HOSTNAME_ERR");
-			Log(LOG_ERROR|LOG_SYS, "Cannot expand %COMPUTERNAME%");
-        }
-	}
+			printf( "Cannot expand %COMPUTERNAME%");
+       }
+	
 
 	/* Create Timestamp and add to error_message along with hostname */
 	/* This maintains consistency with regular non-error packets */

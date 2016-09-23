@@ -56,39 +56,11 @@
 
 // Include files //
 #include "main.h"
-#include "log.h"
-#include "syslog.h"
+
 #include "check.h"
 BOOL ServiceIsRunning = TRUE;
 
 
-// Facility conversion table //
-static struct {
-	char * name;
-	int id;
-} FacilityTable[] = {
-	{ "auth", SYSLOG_AUTH },
-	{ "authpriv", SYSLOG_AUTHPRIV },
-	{ "cron", SYSLOG_CRON },
-	{ "daemon", SYSLOG_DAEMON },
-	{ "ftp", SYSLOG_FTP },
-	{ "kern", SYSLOG_KERN },
-	{ "local0", SYSLOG_LOCAL0 },
-	{ "local1", SYSLOG_LOCAL1 },
-	{ "local2", SYSLOG_LOCAL2 },
-	{ "local3", SYSLOG_LOCAL3 },
-	{ "local4", SYSLOG_LOCAL4 },
-	{ "local5", SYSLOG_LOCAL5 },
-	{ "local6", SYSLOG_LOCAL6 },
-	{ "local7", SYSLOG_LOCAL7 },
-	{ "lpr", SYSLOG_LPR },
-	{ "mail", SYSLOG_MAIL },
-	{ "news", SYSLOG_NEWS },
-	{ "ntp", SYSLOG_NTP },
-	{ "security", SYSLOG_SECURITY },
-	{ "user", SYSLOG_USER },
-	{ "uucp", SYSLOG_UUCP }
-};
 
 
 
@@ -100,28 +72,3 @@ static struct {
 
 
 
-
-
-// Check for new Crimson Log Service //
-int CheckForWindowsEvents()
-{
-	HKEY hkey = NULL;
-    BOOL winEvents = FALSE;
-
-	// Check if the new Windows Events Service is in use //
-	// If so we will use the new API's to sift through events // 打开一个指定的键
-	if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\ForwardedEvents", 0, KEY_READ, &hkey) != ERROR_SUCCESS)
-		winEvents = FALSE;
-	else
-		winEvents = TRUE;
-		
-	if (hkey)
-		RegCloseKey(hkey);
-
-	// A level of 1 (Critical) is not valid in this process prior //
-	// to the new Windows Events. Set level to 2 (Error) //
-	if (winEvents == FALSE && SyslogLogLevel == 1)
-		SyslogLogLevel = 2;
-
-    return winEvents;
-}

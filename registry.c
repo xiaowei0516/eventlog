@@ -38,7 +38,7 @@ int RegistryGather()
        RegistryEventlogKeyPath[] = "SYSTEM\\CurrentControlSet\\Services\\Eventlog";
 */
 	if (RegOpenKey(HKEY_LOCAL_MACHINE, RegistryEventlogKeyPath, &registry_handle)) {
-		Log(LOG_ERROR|LOG_SYS, "Cannot initialize access to registry: \"%s\"", RegistryEventlogKeyPath);
+		printf( "Cannot initialize access to registry: \"%s\"", RegistryEventlogKeyPath);
 		return 1;
 	}
 

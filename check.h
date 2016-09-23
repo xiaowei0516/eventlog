@@ -55,32 +55,12 @@
 */
 
 /* CONSTANTS */
-#define MIN_LOG_LEVEL 0
-#define MAX_LOG_LEVEL 4
 
-/* External Variables */
-extern int IGNORED_LINES;
-extern int XPATH_COUNT;
 
-/* Ignored Events Structure */
-struct EVENT_LIST {
-	char source[SOURCE_SZ];
-	WCHAR wsource[SOURCE_SZ];
-	char * query;
-	BOOL wild;
-	BOOL wildSource;
-	int id;
-};
 
-/* XPath Query Structure */
-struct XPATH_LIST {
-	char * plugin;
-    char * source;
-    char * query;
-    struct XPATH_LIST* next;
-};
 
-/* Prototypes */
-XPathList* AddXPath(XPathList* xpathList, char * plugin, char * source, char * query);
-XPathList* CreateXPath(char * plugin, char * source, char * query);
-void       DeleteXPath(XPathList* oldXPath);
+
+
+
+extern BOOL ServiceIsRunning;
+

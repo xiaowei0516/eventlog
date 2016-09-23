@@ -36,7 +36,7 @@ int EventlogCreate(char * name)
 {
       printf("count:%d,  name--->%s\n", EventlogCount, name);
 	if (EventlogCount == EVENTLOG_SZ) {  
-		Log(LOG_ERROR, "Too many eventlogs: %d", EVENTLOG_SZ);
+		printf( "Too many eventlogs: %d", EVENTLOG_SZ);
 		return 1;
 	}
 	/* Store new name */
@@ -93,19 +93,19 @@ static int EventlogOpen(int log)
 	*/
 	EventlogList[log].handle = OpenEventLog(NULL, EventlogList[log].name);
 	if (EventlogList[log].handle == NULL) {
-		Log(LOG_ERROR|LOG_SYS, "Cannot open event log: \"%s\"", EventlogList[log].name);
+		printf( "Cannot open event log: \"%s\"", EventlogList[log].name);
 		return 1;
 	}
 
 	/* Get number of records to skip */
 	if (GetNumberOfEventLogRecords(EventlogList[log].handle, &count) == 0) {
-		Log(LOG_ERROR|LOG_SYS, "Cannot get record count for event log: \"%s\"", EventlogList[log].name);
+		printf( "Cannot get record count for event log: \"%s\"", EventlogList[log].name);
 		return 1;
 	}
 
 	/* Get oldest record number */
 	if (GetOldestEventLogRecord(EventlogList[log].handle, &oldest) == 0 && count != 0) {
-		Log(LOG_ERROR|LOG_SYS, "Cannot get oldest record number for event log: \"%s\"", EventlogList[log].name);
+		printf("Cannot get oldest record number for event log: \"%s\"", EventlogList[log].name);
 		return 1;
 	}
 
@@ -183,19 +183,19 @@ char * EventlogNext(int log, int * level)
 
 			/* Message too large... skip over */
 			case ERROR_INSUFFICIENT_BUFFER:
-				Log(LOG_WARNING, "Eventlog message size too large: \"%s\": %u bytes", EventlogList[log].name, needed);
+				printf( "Eventlog message size too large: \"%s\": %u bytes", EventlogList[log].name, needed);
 				EventlogList[log].recnum++;
 				break;
 
 			/* Eventlog corrupted (?)... Reopen */
 			case ERROR_EVENTLOG_FILE_CORRUPT:
-				Log(LOG_INFO, "Eventlog was corrupted: \"%s\"", EventlogList[log].name);
+				printf( "Eventlog was corrupted: \"%s\"", EventlogList[log].name);
 				reopen = TRUE;
 				break;
 
 			/* Eventlog files are clearing... Reopen */
 			case ERROR_EVENTLOG_FILE_CHANGED:
-				Log(LOG_INFO, "Eventlog was cleared: \"%s\"", EventlogList[log].name);
+				printf("Eventlog was cleared: \"%s\"", EventlogList[log].name);
 				reopen = TRUE;
 				break;
 
@@ -213,7 +213,7 @@ char * EventlogNext(int log, int * level)
 
 			/* Unknown condition */
 			default:
-				Log(LOG_ERROR|LOG_SYS, "Eventlog \"%s\" returned error: ", EventlogList[log].name);
+				printf( "Eventlog \"%s\" returned error: ", EventlogList[log].name);
 				ServiceIsRunning = FALSE;
 				return NULL;
 			}
@@ -252,7 +252,7 @@ char * EventlogNext(int log, int * level)
 													     NumStrings    log中string的数量，如果合并就是整个log string*/
 
 		/* Too many strings */
-		Log(LOG_WARNING, "Eventlog message has too many strings to print message: \"%s\": %u strings", EventlogList[log].name, event->NumStrings);
+		printf("Eventlog message has too many strings to print message: \"%s\": %u strings", EventlogList[log].name, event->NumStrings);
 		formatted_string = NULL;
 	} else {
 
@@ -350,14 +350,12 @@ char * EventlogNext(int log, int * level)
 
 	/* Add hostname for RFC compliance (RFC 3164) */
 	/* if -a then use the fqdn bound to our IP address. If none, use the IP address */
-	if (ProgramUseIPAddress == TRUE) {
-		strcpy_s(hostname, HOSTNAME_SZ, ProgramHostName);
-	} else {
-		if (ExpandEnvironmentStrings("%COMPUTERNAME%", hostname, COUNT_OF(hostname)) == 0) {
+	
+	if (ExpandEnvironmentStrings("%COMPUTERNAME%", hostname, COUNT_OF(hostname)) == 0) {
 			strcpy_s(hostname, COUNT_OF(hostname), "HOSTNAME_ERR");
-			Log(LOG_ERROR|LOG_SYS, "Cannot expand %COMPUTERNAME%");
-	    }
-    }
+			printf( "Cannot expand %COMPUTERNAME%");
+	}
+    
 	
 	/* Query and Add timestamp from EventLog, add hostname, */
 	/* and finally the message to the string */

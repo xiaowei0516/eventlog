@@ -77,36 +77,6 @@
 #define FORMAT_SZ		65535
 
 
-int EndsWith(const LPWSTR str, const LPWSTR suffix)
-{
-	size_t lenstr = 0;
-	size_t lensuffix = 0;
-	if (!str || !suffix)
-		return 0;
-	lenstr = wcslen(str);
-
-	lensuffix = strlen(suffix);
-	if (lensuffix >  lenstr)
-		return 0;
-
-	return wcsncmp(str + lenstr - lensuffix, suffix, lensuffix) == 0;
-}
-
-
-int StartsWith(const LPWSTR str, const LPWSTR suffix)
-{
-	size_t lenstr = 0;
-	size_t lensuffix = 0;
-	if (!str || !suffix)
-		return 0;
-	lenstr = wcslen(str);
-
-	lensuffix = strlen(suffix);
-	if (lensuffix >  lenstr)
-		return 0;
-
-	return wcsncmp(str, suffix, lensuffix) == 0;
-}
 
 /* Get error message */
 void GetError(DWORD err_num, char * message, int len)
@@ -119,16 +89,6 @@ void GetError(DWORD err_num, char * message, int len)
 		);
 }
 
-/* WIDE Get error message */
-void GetErrorW(DWORD err_num, WCHAR * message, int len)
-{
-	/* Attempt to get the message text */
-	if (FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, err_num, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), message, len, NULL) == 0)
-		_snwprintf_s(message, len, _TRUNCATE,
-			L"(Error %u)",
-			err_num
-		);
-}
 
 /* Create Timestamp from current local time */
 char * GetTimeStamp()
@@ -197,7 +157,7 @@ char * GetUsername(SID * sid)
 
 		/* Show error (skipping RPC errors) */
 		if (last_err != RPC_S_SERVER_TOO_BUSY)
-			Log(LOG_ERROR|LOG_SYS, "Cannot find SID for \"%s\"", result);
+			printf("Cannot find SID for \"%s\"", result);
 	} else
 		_snprintf_s(result, sizeof(result), _TRUNCATE,
 			"%s\\%s",
@@ -230,7 +190,7 @@ char * LookupMessageFile(char * logtype, char * source, DWORD eventID)
 		source
 	);
 	if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, key, 0, KEY_READ, &hkey) != ERROR_SUCCESS) {
-		Log(LOG_ERROR, "Cannot find message file key for \"%s\"", key);
+		printf("Cannot find message file key for \"%s\"", key);
 		return NULL;
 	}
 
@@ -239,14 +199,14 @@ char * LookupMessageFile(char * logtype, char * source, DWORD eventID)
 	status = RegQueryValueEx(hkey, "EventMessageFile", NULL, &key_type, key_value, &key_size);
 	RegCloseKey(hkey);
 	if (status != ERROR_SUCCESS) {
-		Log(LOG_ERROR|LOG_SYS, "Cannot find key value \"EventMessageFile\": \"%s\"", key);
+		printf("Cannot find key value \"EventMessageFile\": \"%s\"", key);
 		return NULL;
 	}
 
 	/* Expand any environmental strings */
 	if (key_type == REG_EXPAND_SZ) {
 		if (ExpandEnvironmentStrings(key_value, result, sizeof(result)) == 0) {
-			Log(LOG_ERROR|LOG_SYS, "Cannot expand string: \"%s\"", key_value);
+			printf("Cannot expand string: \"%s\"", key_value);
 			return NULL;
 		}
 	} else
@@ -280,7 +240,7 @@ static void SplitMessageFiles(char * message_file)
 
 		/* Check library count */
 		if (MessageFileCount == COUNT_OF(MessageFile)) {
-			Log(LOG_ERROR|LOG_SYS, "Message file split into too many paths: %d paths", MessageFileCount);
+			printf("Message file split into too many paths: %d paths", MessageFileCount);
 			break;
 		}
 
@@ -294,7 +254,7 @@ static void SplitMessageFiles(char * message_file)
 		if (op)
 			*op++ = ';';
 		if (len == 0) {
-			Log(LOG_ERROR|LOG_SYS, "Cannot expand string: \"%s\"", ip);
+			printf( "Cannot expand string: \"%s\"", ip);
 			break;
 		}
 		MessageFileCount++;
@@ -322,7 +282,7 @@ static void LoadMessageFiles()
 
 			/* Something other than a message file missing problem? */
 			if (HRESULT_CODE(last_err) != ERROR_FILE_NOT_FOUND)
-				Log(LOG_ERROR|LOG_SYS, "Cannot load message file: \"%s\"", MessageFile[i].path);
+				printf( "Cannot load message file: \"%s\"", MessageFile[i].path);
 		}
 	}
 }
@@ -362,7 +322,7 @@ static char * FormatMessageFiles(DWORD event_id, char ** string_array)
 
 	/* Something other than a message file missing problem? */
 	if (last_err != ERROR_MR_MID_NOT_FOUND) {
-		Log(LOG_ERROR|LOG_SYS, "Cannot format event ID %u", event_id);
+		printf( "Cannot format event ID %u", event_id);
 	}
 
 	/* Cannot format */
