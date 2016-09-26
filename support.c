@@ -56,7 +56,6 @@
 
 /* Include files */
 #include "main.h"
-#include "syslog.h"
 #include <string.h>
 
 /* Number of libaries to load */
@@ -242,7 +241,7 @@ static void SplitMessageFiles(char * message_file)
 			break;
 		}
 
-		/* Seperate paths */
+		/* Seperate paths£» comma symbol  */
 		op = strchr(ip, ';');
 		if (op)
 			*op = '\0';

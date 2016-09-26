@@ -19,6 +19,7 @@
 #define ERR_FAIL	-1
 #define SOURCE_SZ	128
 #define PLUGIN_SZ	32
+#define SYSLOG_DEF_SZ		1024
 
 /* Compatibility */
 #define in_addr_t	unsigned long

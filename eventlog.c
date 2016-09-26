@@ -1,6 +1,6 @@
 #include "main.h"
 #include "eventlog.h"
-#include "syslog.h"
+
 
 /* Number of eventlogs */
 #define EVENTLOG_SZ		32
@@ -25,23 +25,15 @@ int EventlogCount = 0;
 
 
 
-/* Create new eventlog descriptor
-    创建新的描述符
-    统计eventlog
-*/
+
 int EventlogCreate(char * name)
 {
-      printf("count:%d,  name--->%s\n", EventlogCount, name);
 	if (EventlogCount == EVENTLOG_SZ) {  
 		printf( "Too many eventlogs: %d", EVENTLOG_SZ);
 		return 1;
 	}
-	/* Store new name */
 	strncpy_s(EventlogList[EventlogCount].name, sizeof(EventlogList[EventlogCount].name), name, _TRUNCATE);
-
-	/* Increment count */
 	EventlogCount++;
-	/* Success */
 	return 0;
 }
 
@@ -58,13 +50,9 @@ static void EventlogClose(int log)
 void EventlogsClose()
 {
 	int i;
-
-	/* Loop until list depleted */
 	for (i = 0; i < EventlogCount; i++)
 		if (EventlogList[i].handle)
 			EventlogClose(i);
-
-	/* Reset count */
 	EventlogCount = 0;
 }
 
@@ -73,18 +61,17 @@ static int EventlogOpen(int log)
 {
 	DWORD count;
 	DWORD oldest;
-
-	/* Reset all indicators */
+       /*reset all variable*/
 	EventlogList[log].count = 0;   /*剩余message 数量*/
 	EventlogList[log].pos = 0;       /*当前在buffer 中的位置*/
 	EventlogList[log].recnum = 1;  /*下一次记录的数量*/
 
       printf("EventlogList[%d]:--> %s\n", log, EventlogList[log].name);
-	/* Open log 
+	/* 
+	   Open log 
           Windows 日志：
           应用程序 对应于OpenEventLog（NULL,"Application"）
           安全 对应于OpenEventLog（NULL,"Security"）
-          setup
           系统 对应于OpenEventLog（NULL,"System"）
 
 	*/
@@ -115,17 +102,13 @@ static int EventlogOpen(int log)
 	return 0;
 }
 
-/* Open event logs */
+
 int EventlogsOpen()
 {
 	int i;
-
-	/* Open the log files */
 	for (i = 0; i < EventlogCount; i++)
 		if (EventlogOpen(i))
 			break;
-
-	/* Check for errors */
 	if (i != EventlogCount) {
 		EventlogsClose();
 		return 1;
@@ -171,7 +154,7 @@ char * EventlogNext(int log, int * level)
 		EventlogList[log].pos = 0;
 
 		/* Read a record */
-		needed = 0;
+		needed = 0;                                                                                                                      /*offset*/                                                                                                           /*读了多少*/
 		if (ReadEventLog(EventlogList[log].handle, EVENTLOG_FORWARDS_READ | EVENTLOG_SEEK_READ, EventlogList[log].recnum, EventlogList[log].buffer, sizeof(EventlogList[log].buffer), &EventlogList[log].count, &needed) == 0) {
 
 			/* Check error */
@@ -184,7 +167,7 @@ char * EventlogNext(int log, int * level)
 				EventlogList[log].recnum++;
 				break;
 
-			/* Eventlog corrupted (?)... Reopen */
+			/* Eventlog corrupted ... Reopen */
 			case ERROR_EVENTLOG_FILE_CORRUPT:
 				printf( "Eventlog was corrupted: \"%s\"", EventlogList[log].name);
 				reopen = TRUE;
@@ -309,62 +292,34 @@ char * EventlogNext(int log, int * level)
 
 	/* Select syslog level */
 	switch (event->EventType) {
-		case EVENTLOG_ERROR_TYPE:
-			loglevel = SYSLOG_ERR;
-			*level = SYSLOG_BUILD(SyslogFacility, loglevel);
-			break;
-		case EVENTLOG_WARNING_TYPE:
-			loglevel = SYSLOG_WARNING;
-			*level = SYSLOG_BUILD(SyslogFacility, loglevel);
-			break;
-		case EVENTLOG_INFORMATION_TYPE:
-			loglevel = SYSLOG_NOTICE;
-			*level = SYSLOG_BUILD(SyslogFacility, loglevel);
-			break;
 		case EVENTLOG_AUDIT_SUCCESS:
-            strncat_s(message, sizeof(message), "AUDIT_SUCCESS ", _TRUNCATE);
-			loglevel = SYSLOG_NOTICE;
-			*level = SYSLOG_BUILD(SyslogFacility, loglevel);
+                   strncat_s(message, sizeof(message), "AUDIT_SUCCESS ", _TRUNCATE);
 			break;
 		case EVENTLOG_AUDIT_FAILURE:
-            strncat_s(message, sizeof(message), "AUDIT_FAILURE ", _TRUNCATE);
-			loglevel = SYSLOG_ERR;
-			*level = SYSLOG_BUILD(SyslogFacility, loglevel);
+                   strncat_s(message, sizeof(message), "AUDIT_FAILURE ", _TRUNCATE);
 			break;
 
 		/* Everything else */
+		case EVENTLOG_ERROR_TYPE:
+		case EVENTLOG_WARNING_TYPE:
+		case EVENTLOG_INFORMATION_TYPE:
 		case EVENTLOG_SUCCESS:
 		default:
-			loglevel = SYSLOG_NOTICE;
-			*level = SYSLOG_BUILD(SyslogFacility, loglevel);
 			break;
 	}
 
-	/* If event is not being ignored, make sure it is severe enough to be logged */
-	if (SyslogLogLevel != 0)
-		if (SyslogLogLevel < loglevel-1)
-			return NULL;
 
-	/* Add hostname for RFC compliance (RFC 3164) */
-	/* if -a then use the fqdn bound to our IP address. If none, use the IP address */
-	
 	if (ExpandEnvironmentStrings("%COMPUTERNAME%", hostname, COUNT_OF(hostname)) == 0) {
 			strcpy_s(hostname, COUNT_OF(hostname), "HOSTNAME_ERR");
 			printf( "Cannot expand %COMPUTERNAME%");
 	}
     
-	
-	/* Query and Add timestamp from EventLog, add hostname, */
-	/* and finally the message to the string */
 	_snprintf_s(tstamped_message, sizeof(tstamped_message), _TRUNCATE,
 		"%s %s %s",
 		TimeToString(event->TimeGenerated),
 		hostname,
 		message
 	);
-
-	printf("-------------->%s\n", tstamped_message);
-
 	/* Return formatted message */
 	return tstamped_message;
 }

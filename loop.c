@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include "main.h"
 #include "eventlog.h"
-#include "syslog.h"
-#include "ver.h"
+
+
 
 int ascii2utf8(char * message, int level);
 
@@ -10,20 +10,15 @@ int ascii2utf8(char * message, int level);
 int MainLoop()
 {
 	char * output = NULL;
-	HKEY hkey = NULL;
 	int level;
 	int log;
-	int stat_counter = 0;
-	FILE *fp = NULL;
-
-    
  
-    /* Gather eventlog names */
-    if (RegistryGather())
+      /* Gather eventlog names */
+	if (RegistryGather())
 		return 1;
-     /* Open all eventlogs */
-    if (EventlogsOpen())
-		return 1;
+       /* Open all eventlogs */
+      if (EventlogsOpen())
+ 		return 1;
     
 
 	/* Loop while service is running */
@@ -72,6 +67,7 @@ int ascii2utf8(char * message, int level)
 	// convert from ansi/cp850 codepage (local system codepage) to utf8, widely used codepage on unix systems //
 	MultiByteToWideChar(CP_ACP, 0, error_message, -1, utf16_message, SYSLOG_DEF_SZ);
 	WideCharToMultiByte(CP_UTF8, 0, utf16_message, -1, utf8_message, SYSLOG_DEF_SZ, NULL, NULL);
+	printf("---->%s\n", utf8_message);
 
 
 	//print -- utf8_message
