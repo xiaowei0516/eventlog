@@ -1,7 +1,6 @@
 #include <winsock2.h>
 #include <windows.h>
 #include <iphlpapi.h>
-#include <dhcpcsdk.h>
 #include <lm.h>
 #include <stdio.h>
 #include <stdlib.h>
